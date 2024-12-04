@@ -49,6 +49,13 @@ class MinecraftCodeEditor:
         self.clear_button = tk.Button(self.button_frame, text="Clear Text", command=self.clear_text)
         self.clear_button.grid(row=0, column=2 + len(format_codes), padx=5, pady=5)
 
+        # チェックボックス（§を&に置き換え）
+        self.replace_var = tk.BooleanVar(value=False)
+        self.replace_checkbox = tk.Checkbutton(
+            self.button_frame, text="Replace § with &", variable=self.replace_var
+        )
+        self.replace_checkbox.grid(row=0, column=2 + len(format_codes) + 1, padx=5, pady=5)
+
         # テキストボックス
         self.text_box = tk.Text(self.frame, wrap="word", height=20, width=50)
         self.text_box.grid(row=1, column=0, columnspan=3, sticky="nsew", padx=5, pady=5)
@@ -60,10 +67,16 @@ class MinecraftCodeEditor:
     def add_color_code(self):
         """選択されたカラーコードをテキストボックスに追加"""
         selected_code = self.color_code_var.get().split()[0]  # コード部分だけを抽出
-        self.text_box.insert(tk.END, selected_code)
+        self.insert_code(selected_code)
 
     def add_format_code(self, code):
         """指定されたフォーマットコードをテキストボックスに追加"""
+        self.insert_code(code)
+
+    def insert_code(self, code):
+        """コードをテキストボックスに挿入（§を&に置き換える場合あり）"""
+        if self.replace_var.get():  # チェックボックスがオンの場合
+            code = code.replace("§", "&")
         self.text_box.insert(tk.END, code)
 
     def clear_text(self):
